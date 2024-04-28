@@ -3,7 +3,7 @@ from autograd import grad, elementwise_grad
 import autograd.numpy.random as npr
 from autograd.misc.optimizers import adam
 from matplotlib import pyplot as plt
-m=10
+m=10 #The parameter e in the theory of the Skyrme Model
 a=0.4
 def init_random_params(scale, layer_sizes, rs=npr.RandomState(42)):
     """Build a list of (weights, biases) tuples, one for each layer."""
@@ -13,7 +13,7 @@ def init_random_params(scale, layer_sizes, rs=npr.RandomState(42)):
 
 def swish(x):
     "see https://arxiv.org/pdf/1710.05941.pdf"
-    return (x+1)/(1.0+np.exp(-x-1))
+    return (x+1)/(1.0+np.exp(-x-1))   #activation function
 
 def psi(nnparams, inputs):
     "Neural network wavefunction"
@@ -36,7 +36,7 @@ def objective(params, step):
     # This is Profile Function
     zeq = ((x)**2+a)*psipp(nnparams,x)+ 2*(x+a)*psip(nnparams,x) - np.sin(2*psi(nnparams,x)) 
     bc0 = psi(nnparams, 0.0)-3.14 # This approximates the first boundary condition at the initial boundary point
-    bc1 = psi(nnparams, 20.0) -0.000182 # This approximates the second boundary condition at the edge boundary point
+    bc1 = psi(nnparams, 20.0) -0.00 # This approximates the second boundary condition at the edge boundary point
     y2 = psi(nnparams, x)**2
     # This is a numerical trapezoid integration
     prob = np.sum((y2[1:] + y2[0:-1]) / 2 * (x[1:] - x[0:-1]))
@@ -59,7 +59,7 @@ fpi=93
 ed=[0 for elements in range(500)]
 
 for i in range(498):
-    ed[i+1]=(2*(np.sin(y[i+1]))**2+x[i+1]**2*z[i+1]**2)
+    ed[i+1]=(2*(np.sin(y[i+1]))**2+x[i+1]**2*z[i+1]**2)   #energy density without the Skyrme Term
 
 def e(k,x):
 	return np.exp(-k*1j*x/(m*93))
@@ -69,16 +69,16 @@ ymod=[0 for element in range(500)]
 ysum=0
 
 for k in range(500):
-	yk[k]=(e(k,0)/2)*x[0]**2*z[0]**2+(e(k,20)/2)*x[499]**2*z[499]**2
+	yk[k]=(e(k,0)/2)*x[0]**2*z[0]**2+(e(k,20)/2)*x[499]**2*z[499]**2      #Fourier Transform Initiated, calculated using Trapezoidal rulew of numerical integration
 
 for k in range(500):
 	for i in range(498):
 		yk[k]+=e(k,x[i+1])*ed[i+1]
 		
 for k in range(500):
-	ymod[k] =(np.absolute(yk[k]))**2
+	ymod[k] =(np.absolute(yk[k]))**2     
 
-ysum=(ymod[0])/2 + (ymod[499])/2
+ysum=(ymod[0])/2 + (ymod[499])/2    #trapezoidal integration
 
 for k in range(498):
        ysum+=ymod[k+1]
