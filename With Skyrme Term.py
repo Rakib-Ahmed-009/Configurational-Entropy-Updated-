@@ -12,7 +12,7 @@ def init_random_params(scale, layer_sizes, rs=npr.RandomState(42)):
 
 def swish(x):
     "see https://arxiv.org/pdf/1710.05941.pdf"
-    return (x) / (1.0 + np.exp(-x))
+    return (x+1) / (1.0 + np.exp(-x-1))
 
 def psi(nnparams, inputs):
     "Neural network wavefunction"
