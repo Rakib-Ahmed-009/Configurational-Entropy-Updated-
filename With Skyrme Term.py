@@ -11,7 +11,6 @@ def init_random_params(scale, layer_sizes, rs=npr.RandomState(42)):
             for insize, outsize in zip(layer_sizes[:-1], layer_sizes[1:])]
 
 def swish(x):
-    "see https://arxiv.org/pdf/1710.05941.pdf"
     return (x+1) / (1.0 + np.exp(-x-1))
 
 def psi(nnparams, inputs):
@@ -53,8 +52,9 @@ import matplotlib.pyplot as plt
 x = np.linspace(0, 20, 500)[:, None]
 y = psi(params['nn'], x)
 z = psip(params['nn'], x)
-fpi=93
-m=10
+fpi=129
+m=10 #Skyrme parameter
+k=np.linspace(0,1450,3000) #discretization of momentum space for a close approximation to continuous fourier transform 
 
 
 ed=[0 for elements in range(500)]
@@ -63,37 +63,32 @@ for i in range(498):
     ed[i+1]=(2*(np.sin(y[i+1]))**2+x[i+1]**2*z[i+1]**2)+ (np.sin(y[i+1]))**2*((np.sin(y[i+1])**2)/(x[i+1]**2)+2*z[i+1]**2)
 
 def e(k,x):
-	return np.exp(-k*1j*x/(m*93))
+	return np.exp(-k*1j*x/(m*fpi))
 
-yk=[complex(0,0) for element in range(500)]
-ymod=[0 for element in range(500)]
+yk=[complex(0,0) for element in range(3000)]
+ymod=[0 for element in range(3000)]
 ysum=0
 
-for k in range(500):
-	yk[k]=(e(k,0)/2)*x[0]**2*z[0]**2+(e(k,20)/2)*x[499]**2*z[499]**2
+for j in range(3000):
+	yk[j]=(e(k[j],0)/2)*x[0]**2*z[0]**2+(e(k[j],20)/2)*x[499]**2*z[499]**2
 
-for k in range(500):
+for j in range(3000):
 	for i in range(498):
-		yk[k]+=e(k,x[i+1])*ed[i+1]
+		yk[j]+=e(k[j],x[i+1])*ed[i+1]
 		
-for k in range(500):
-	ymod[k] =np.absolute(yk[k])**2
+for j in range(3000):
+	ymod[j] =np.absolute(yk[j])**2
 
-ysum=ymod[0]/2+ymod[499]/2
+ysum=ymod[0]/2+ymod[2999]/2
 
-for k in range(498):
-       ysum+=ymod[k+1]
+for j in range(2998):
+       ysum+=ymod[j+1]
        
 modfrac = ymod/ysum
 modftud = modfrac/np.max(modfrac)
 Df = -modftud*np.log(modftud)
-CE = (Df[0]/2)+(Df[499]/2)
-for k in range(498):
-	CE+=Df[k+1]
+CE = (Df[0]/2)+(Df[2999]/2)
+for j in range(2998):
+	CE+=Df[j+1]
 
 print(CE)
-
-
-plt.plot(x, y, label='NN')
-plt.legend()
-plt.show()
