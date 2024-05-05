@@ -49,18 +49,19 @@ params = adam(grad(objective), params,
               step_size=0.095, num_iters=29000, callback=callback)
 import matplotlib.pyplot as plt
 
+#neural network solution ends here
 x = np.linspace(0, 20, 500)[:, None]
-y = psi(params['nn'], x)
-z = psip(params['nn'], x)
-fpi=129
+y = psi(params['nn'], x) #profile function
+z = psip(params['nn'], x) #first order derivative
+fpi=129 #pion decay constant
 m=10 #Skyrme parameter
 k=np.linspace(0,1450,3000) #discretization of momentum space for a close approximation to continuous fourier transform 
 
 
-ed=[0 for elements in range(500)]
+ed=[0 for elements in range(500)]  #initial array for energy density
 
 for i in range(498):
-    ed[i+1]=(2*(np.sin(y[i+1]))**2+x[i+1]**2*z[i+1]**2)+ (np.sin(y[i+1]))**2*((np.sin(y[i+1])**2)/(x[i+1]**2)+2*z[i+1]**2)
+    ed[i+1]=(2*(np.sin(y[i+1]))**2+x[i+1]**2*z[i+1]**2)+ (np.sin(y[i+1]))**2*((np.sin(y[i+1])**2)/(x[i+1]**2)+2*z[i+1]**2)  
 
 def e(k,x):
 	return np.exp(-k*1j*x/(m*fpi))
