@@ -3,7 +3,7 @@ from autograd import grad, elementwise_grad
 import autograd.numpy.random as npr
 from autograd.misc.optimizers import adam
 
-
+#neural network implementation starts
 def init_random_params(scale, layer_sizes, rs=npr.RandomState(42)):
     """Build a list of (weights, biases) tuples, one for each layer."""
     return [(rs.randn(insize, outsize) * scale,   # weight matrix
@@ -61,35 +61,36 @@ k=np.linspace(0,1450,3000) #discretization of momentum space for a close approxi
 ed=[0 for elements in range(500)]  #initial array for energy density
 
 for i in range(498):
-    ed[i+1]=(2*(np.sin(y[i+1]))**2+x[i+1]**2*z[i+1]**2)+ (np.sin(y[i+1]))**2*((np.sin(y[i+1])**2)/(x[i+1]**2)+2*z[i+1]**2)  
+    ed[i+1]=(2*(np.sin(y[i+1]))**2+x[i+1]**2*z[i+1]**2)+ (np.sin(y[i+1]))**2*((np.sin(y[i+1])**2)/(x[i+1]**2)+2*z[i+1]**2)  #energy density for the skyrme model excluding the boundary points
 
 def e(k,x):
-	return np.exp(-k*1j*x/(m*fpi))
+	return np.exp(-k*1j*x/(m*fpi)) #the exponential factor for fourier transform
 
-yk=[complex(0,0) for element in range(3000)]
-ymod=[0 for element in range(3000)]
-ysum=0
+yk=[complex(0,0) for element in range(3000)] #Array initialization for storing fourier transform results
+ymod=[0 for element in range(3000)] #mod square of the fourier transform
+ysum=0 #sum of all the ymods
 
+#Fourier transform starts here
 for j in range(3000):
-	yk[j]=(e(k[j],0)/2)*x[0]**2*z[0]**2+(e(k[j],20)/2)*x[499]**2*z[499]**2
+	yk[j]=(e(k[j],0)/2)*x[0]**2*z[0]**2+(e(k[j],20)/2)*x[499]**2*z[499]**2 #initializing the trapezoidal rule for boundary points
 
 for j in range(3000):
 	for i in range(498):
-		yk[j]+=e(k[j],x[i+1])*ed[i+1]
-		
+		yk[j]+=e(k[j],x[i+1])*ed[i+1] #implementing trapezoidal rule for the inner points
+#Fourier transform ends
 for j in range(3000):
-	ymod[j] =np.absolute(yk[j])**2
+	ymod[j] =np.absolute(yk[j])**2  #mod square of all the fourier transform values
 
-ysum=ymod[0]/2+ymod[2999]/2
+ysum=ymod[0]/2+ymod[2999]/2  #initializing the trapezoidal rule for integrating all the mod squares
 
 for j in range(2998):
-       ysum+=ymod[j+1]
+       ysum+=ymod[j+1] #mod square integration for inner points
        
-modfrac = ymod/ysum
-modftud = modfrac/np.max(modfrac)
-Df = -modftud*np.log(modftud)
-CE = (Df[0]/2)+(Df[2999]/2)
+modfrac = ymod/ysum #modal fraction
+modftud = modfrac/np.max(modfrac) #normalized modal fraction
+Df = -modftud*np.log(modftud) #Differential configurational entropy
+CE = (Df[0]/2)+(Df[2999]/2) #initializing trapezoidal rule for integrating DCE
 for j in range(2998):
-	CE+=Df[j+1]
+	CE+=Df[j+1] #DCE trapezoidal rule for all the inner points
 
 print(CE)
