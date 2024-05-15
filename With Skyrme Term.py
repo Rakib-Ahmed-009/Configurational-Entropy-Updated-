@@ -15,7 +15,6 @@ def swish(x):
     return (x) / (1.0 + np.exp(-x))  ##### Defining the activation function #####
 
 def psi(nnparams, inputs):       ##### Defining the profile function as a parameter of the radial distance and neural network parameters #####
-    "Neural network wavefunction"
     for W, b in nnparams:
         outputs = np.dot(inputs, W) + b    ##### Combining weights and biases with inputs and hence connecting all the neurons as a linear combination #####
         inputs = swish(outputs)    
