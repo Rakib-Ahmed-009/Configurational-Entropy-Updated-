@@ -3,7 +3,7 @@ from autograd import grad, elementwise_grad
 import autograd.numpy.random as npr
 from autograd.misc.optimizers import adam
 
-#neural network implementation starts
+//neural network implementation starts here
 def init_random_params(scale, layer_sizes, rs=npr.RandomState(42)):
     """Build a list of (weights, biases) tuples, one for each layer."""
     return [(rs.randn(insize, outsize) * scale,   # weight matrix
