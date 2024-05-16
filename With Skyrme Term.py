@@ -12,7 +12,7 @@ def init_random_params(scale, layer_sizes, rs=npr.RandomState(42)):
             for insize, outsize in zip(layer_sizes[:-1], layer_sizes[1:])]
 
 def swish(x):
-    return (x) / (1.0 + np.exp(-x))  ##### Defining the activation function #####
+    return (x+1) / (1.0 + np.exp(-x-1))  ##### Defining the activation function #####
 
 def psi(nnparams, inputs):       ##### Defining the profile function as a parameter of the radial distance and neural network parameters #####
     for W, b in nnparams:
