@@ -52,7 +52,7 @@ y = psi(params['nn'], x) ##### profile function #####
 z = psip(params['nn'], x) ##### first order derivative #####
 fpi=129 ##### pion decay constant #####
 m=10 ##### Skyrme parameter #####
-k=np.linspace(0,1450,3000) ##### discretization of momentum space for a close approximation to continuous fourier transform #####
+k=np.linspace(0,1500,3000) ##### discretization of momentum space for a close approximation to continuous fourier transform #####
 
 
 ed=[0 for elements in range(500)]  ##### initial array for energy density #####
