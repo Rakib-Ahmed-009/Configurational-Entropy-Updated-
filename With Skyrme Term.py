@@ -12,7 +12,7 @@ def init_random_params(scale, layer_sizes, rs=npr.RandomState(42)):
             for insize, outsize in zip(layer_sizes[:-1], layer_sizes[1:])]
 
 def swish(x):
-    return (x+1) / (1.0 + np.exp(-x-1))  ##### Defining the activation function #####
+    return (x) / (1.0 + np.exp(-x))  ##### Defining the activation function #####
 
 def psi(nnparams, inputs):       ##### Defining the profile function as a parameter of the radial distance and neural network parameters #####
     for W, b in nnparams:
@@ -32,7 +32,7 @@ def objective(params, step):   ##### Defining the cost function as objective, wh
     nnparams = params['nn']
     a = params['factor']        
     ##### zeq is the ODE for the profile function #####
-    zeq = psipp(nnparams,x)+((psip(nnparams,x)**2)*(np.sin(2*psi(nnparams,x))) + 2*(x)*psip(nnparams,x) - np.sin(2*psi(nnparams,x)) - (1/(x**2+a))*((np.sin(psi(nnparams,x)))**2)*(np.sin(2*psi(nnparams,x))))/((x**2+a)+2*((np.sin(psi(nnparams,x)))**2)) 
+    zeq = x**2*psipp(nnparams,x)+((psip(nnparams,x)**2)*(np.sin(2*psi(nnparams,x))) + 2*(x)*psip(nnparams,x) - np.sin(2*psi(nnparams,x)) - ((np.sin(psi(nnparams,x)))**2)*(np.sin(2*psi(nnparams,x))))+2*((np.sin(psi(nnparams,x)))**2))*psipp(nnparams,x) 
     bc0 = psi(nnparams, 0.0)-3.14 ##### This approximates the first boundary condition at the initial boundary point #####
     bc1 = psi(nnparams, 20.0) -0.00 ##### This approximates the second boundary condition at the final boundary point #####
     return np.mean(zeq**2) + bc0**2 + bc1**2
